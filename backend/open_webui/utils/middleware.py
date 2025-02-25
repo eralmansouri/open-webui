@@ -1137,16 +1137,17 @@ async def process_chat_response(
                                 content = f'{content}\n<details type="reasoning" done="false">\n<summary>Thinking…</summary>\n{reasoning_display_content}\n</details>\n'
 
                     elif block["type"] in ["thinking", "redacted_thinking"]:
-                        thought = "\n".join(
+                        thinking = block.get("thinking","")
+
+                        thinking_display_content = "\n".join(
                             (f"> {line}" if not line.startswith(">") else line)
-                            for block in response['content'] if 'thinking' in block
-                            for line in block['thinking'].splitlines()
+                            for line in thinking.splitlines()
                         )
 
                         if raw:
-                            content = f'{content}\n<{block["tag"]}>{block.get("thinking","")}</{block["tag"]}>\n'
+                            content = f'{content}\n<{block["tag"]}>{thinking}</{block["tag"]}>\n'
                         else:
-                            content = f'{content}\n<details type="thinking"">\n<summary>Thinking…</summary>\n{thought}\n</details>\n'
+                            content = f'{content}\n<details type="thinking"">\n<summary>Thinking…</summary>\n{thinking_display_content}\n</details>\n'
 
                     elif block["type"] == "code_interpreter":
                         attributes = block.get("attributes", {})
